@@ -1,0 +1,29 @@
+{
+  "name": "elementor-clone",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "nuxt build",
+    "dev": "HOST=0.0.0.0 nuxt dev",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview",
+    "postinstall": "nuxt prepare"
+  },
+  "dependencies": {
+    "nuxt": "^3.13.0",
+    "@nuxtjs/tailwindcss": "^6.11.4",
+    "vue-draggable-next": "^2.2.1",
+    "vue3-smooth-dnd": "^0.0.6",
+    "vuex": "^4.1.0",
+    "@headlessui/vue": "^1.7.19",
+    "@heroicons/vue": "^2.1.1",
+    "uuid": "^9.0.1",
+    "lodash.clonedeep": "^4.5.0",
+    "vuedraggable": "^4.1.0",
+    "dompurify": "^3.0.9",
+    "highlight.js": "^11.9.0"
+  },
+  "devDependencies": {
+    "@nuxtjs/color-mode": "^3.3.2"
+  }
+}

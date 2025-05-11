@@ -542,9 +542,10 @@
   </div>
 </template>
 
+
 <script setup>
-import { ref, watch, onMounted } from 'vue';
-import cloneDeep from 'lodash.clonedeep';
+import { ref, watch } from 'vue';
+import { v4 as uuidv4 } from 'uuid';
 
 const props = defineProps({
   element: {
@@ -555,83 +556,15 @@ const props = defineProps({
 
 const emit = defineEmits(['update']);
 
-// Deep copy of element data for editing
 const elementData = ref(null);
 
-// Initialize default settings for new elements
-function initializeElementData(element) {
-  const data = cloneDeep(element);
-  
-  // Ensure settings object exists
-  if (!data.settings) {
-    data.settings = {};
-  }
-  
-  // Initialize typography settings for text-based elements
-  if (['heading', 'text', 'button'].includes(element.type) && !data.settings.typography) {
-    data.settings.typography = {
-      size: '16',
-      weight: '400',
-      lineHeight: '1.5'
-    };
-  }
-  
-  // Initialize margin settings if they don't exist
-  if (!data.settings.margin) {
-    data.settings.margin = {
-      top: '0',
-      right: '0',
-      bottom: '0',
-      left: '0'
-    };
-  }
-  
-  // Initialize padding settings if they don't exist
-  if (!data.settings.padding) {
-    data.settings.padding = {
-      top: '0',
-      right: '0',
-      bottom: '0',
-      left: '0'
-    };
-  }
-  
-  // Initialize border settings if they don't exist
-  if (['heading', 'text', 'button', 'image'].includes(element.type) && !data.settings.border) {
-    data.settings.border = {
-      style: 'none',
-      width: '0',
-      color: '#cccccc'
-    };
-  }
-  
-  // Initialize spacer mobile visibility
-  if (element.type === 'spacer' && data.settings.mobileVisible === undefined) {
-    data.settings.mobileVisible = true;
-  }
+// Add capitalize function
+const capitalize = (str) => {
+  if (!str) return '';
+  return str.charAt(0).toUpperCase() + str.slice(1);
+};
 
-  // Initialize size settings
-  if (!data.settings.width) {
-    data.settings.width = '100';
-    data.settings.widthUnit = '%';
-  }
-  if (!data.settings.height) {
-    data.settings.height = 'auto';
-    data.settings.heightUnit = 'auto';
-  }
-  
-  // Initialize custom code settings
-  if (!data.settings.customCSS) {
-    data.settings.customCSS = '';
-  }
-  if (!data.settings.customJS) {
-    data.settings.customJS = '';
-  }
-  
-  return data;
-}
-
-// Watch for changes in the selected element
+// Initialize element data
 watch(() => props.element, (newElement) => {
   if (newElement) {
     elementData.value = initializeElementData(newElement);
@@ -640,28 +573,145 @@ watch(() => props.element, (newElement) => {
   }
 }, { immediate: true });
 
-// Watch for changes in elementData to emit updates
+// Watch for changes
 watch(elementData, (newData) => {
   if (newData) {
     emit('update', newData);
   }
 }, { deep: true });
 
-// Helper function to capitalize strings
-function capitalize(str) {
-  return str.charAt(0).toUpperCase() + str.slice(1);
+// Navbar methods
+function addMenuItem() {
+  if (!elementData.value.content.menuItems) {
+    elementData.value.content.menuItems = [];
+  }
+  
+  elementData.value.content.menuItems.push({
+    id: uuidv4(),
+    text: 'New Item',
+    url: '#'
+  });
 }
 
-function getCodePlaceholder(type) {
-  switch (type) {
-    case 'css':
-      return '/* Add your CSS code here */\n.my-class {\n  color: #333;\n}';
-    case 'javascript':
-      return '// Add your JavaScript code here\nconsole.log("Hello World!");';
-    case 'html':
-      return '<!-- Add your HTML code here -->\n<div class="my-element">\n  <h1>Hello World!</h1>\n</div>';
-    default:
-      return '';
+function removeMenuItem(index) {
+  elementData.value.content.menuItems.splice(index, 1);
+}
+
+// Form methods
+function addFormField() {
+  if (!elementData.value.settings.fields) {
+    elementData.value.settings.fields = [];
   }
+  
+  elementData.value.settings.fields.push({
+    id: uuidv4(),
+    type: 'text',
+    label: 'New Field',
+    required: false,
+    placeholder: ''
+  });
+}
+
+function removeFormField(index) {
+  elementData.value.settings.fields.splice(index, 1);
+}
+
+// Accordion methods
+function addAccordionItem() {
+  if (!elementData.value.content.items) {
+    elementData.value.content.items = [];
+  }
+  
+  elementData.value.content.items.push({
+    id: uuidv4(),
+    title: 'New Item',
+    content: 'Add your content here'
+  });
+}
+
+function removeAccordionItem(index) {
+  elementData.value.content.items.splice(index, 1);
+}
+
+// Helper function to initialize element data
+function initializeElementData(element) {
+  const data = JSON.parse(JSON.stringify(element));
+  
+  // Initialize settings based on element type
+  if (!data.settings) {
+    data.settings = {};
+  }
+  
+  switch (element.type) {
+    case 'navbar':
+      if (!data.settings.logoHeight) data.settings.logoHeight = 40;
+      if (!data.settings.sticky) data.settings.sticky = false;
+      if (!data.content.menuItems) {
+        data.content.menuItems = [
+          { id: uuidv4(), text: 'Home', url: '#' },
+          { id: uuidv4(), text: 'About', url: '#' }
+        ];
+      }
+      break;
+      
+    case 'form':
+      if (!data.settings.fields) {
+        data.settings.fields = [
+          {
+            id: uuidv4(),
+            type: 'text',
+            label: 'Name',
+            required: true,
+            placeholder: 'Enter your name'
+          },
+          {
+            id: uuidv4(),
+            type: 'email',
+            label: 'Email',
+            required: true,
+            placeholder: 'Enter your email'
+          }
+        ];
+      }
+      if (!data.settings.submitButton) {
+        data.settings.submitButton = {
+          text: 'Submit',
+          align: 'left'
+        };
+      }
+      if (!data.settings.successMessage) {
+        data.settings.successMessage = 'Thank you for your submission!';
+      }
+      break;
+      
+    case 'code':
+      if (!data.settings.language) data.settings.language = 'javascript';
+      if (!data.settings.showLineNumbers) data.settings.showLineNumbers = true;
+      if (!data.settings.copyButton) data.settings.copyButton = true;
+      if (!data.content) {
+        data.content = '// Add your code here\nconsole.log("Hello World!");';
+      }
+      break;
+      
+    case 'accordion':
+      if (!data.settings.allowMultiple) data.settings.allowMultiple = false;
+      if (!data.content.items) {
+        data.content.items = [
+          {
+            id: uuidv4(),
+            title: 'Accordion Item 1',
+            content: 'Content for accordion item 1'
+          },
+          {
+            id: uuidv4(),
+            title: 'Accordion Item 2',
+            content: 'Content for accordion item 2'
+          }
+        ];
+      }
+      break;
+  }
+  
+  return data;
 }
 </script>

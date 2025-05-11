@@ -1,0 +1,74 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --color-primary: #5d3bee;
+  --color-primary-light: #7252f2;
+  --color-primary-dark: #4823d6;
+  --color-secondary: #0d9488;
+  --color-accent: #ea580c;
+  --color-success: #16a34a;
+  --color-warning: #ca8a04;
+  --color-error: #dc2626;
+  --color-gray-50: #f9fafb;
+  --color-gray-100: #f3f4f6;
+  --color-gray-200: #e5e7eb;
+  --color-gray-300: #d1d5db;
+  --color-gray-400: #9ca3af;
+  --color-gray-500: #6b7280;
+  --color-gray-600: #4b5563;
+  --color-gray-700: #374151;
+  --color-gray-800: #1f2937;
+  --color-gray-900: #111827;
+}
+
+@layer components {
+  .btn {
+    @apply py-2 px-4 rounded-md font-medium transition-all duration-200;
+  }
+  
+  .btn-primary {
+    @apply bg-[var(--color-primary)] text-white hover:bg-[var(--color-primary-light)];
+  }
+  
+  .btn-secondary {
+    @apply bg-[var(--color-secondary)] text-white hover:opacity-90;
+  }
+  
+  .editor-element {
+    @apply border-2 border-transparent transition-all duration-200;
+  }
+  
+  .editor-element:hover {
+    @apply border-2 border-[var(--color-primary-light)] border-dashed;
+  }
+  
+  .editor-element.selected {
+    @apply border-2 border-[var(--color-primary)] border-solid;
+  }
+  
+  .panel-title {
+    @apply font-medium text-gray-800 text-sm uppercase tracking-wider mb-2;
+  }
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
+.slide-right-enter-active,
+.slide-right-leave-active {
+  transition: transform 0.3s ease;
+}
+
+.slide-right-enter-from,
+.slide-right-leave-to {
+  transform: translateX(-100%);
+}
